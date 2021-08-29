@@ -26,7 +26,7 @@
 *
 */
 
-#include "Logger.h"
+#include "RaychelLogger/Logger.h"
 
 #include <filesystem>
 #include <fstream>
@@ -90,9 +90,7 @@ namespace Logger {
         {
             if (doColor) {
                 const auto col = getLogColor();
-                outStream.write(col.data(), col.size())
-                    .write(msg.data(), msg.size())
-                    .write(reset_col.data(), reset_col.size());
+                outStream.write(col.data(), col.size()).write(msg.data(), msg.size()).write(reset_col.data(), reset_col.size());
             } else {
                 outStream.write(msg.data(), msg.size());
             }
@@ -167,7 +165,7 @@ namespace Logger {
     std::string startTimer(std::string_view label) noexcept
     {
         _::lockStream();
-        [[maybe_unused]] const auto unlock_on_exit = details::Finally{[]{ _::unlockStream(); }};
+        [[maybe_unused]] const auto unlock_on_exit = details::Finally{[] { _::unlockStream(); }};
         const auto tp = std::chrono::high_resolution_clock::now();
 
         timePoints.insert_or_assign(std::string{label}, tp);
@@ -179,7 +177,7 @@ namespace Logger {
         using namespace std::chrono;
 
         _::lockStream();
-        [[maybe_unused]] const auto unlock_on_exit = details::Finally{[]{ _::unlockStream(); }};
+        [[maybe_unused]] const auto unlock_on_exit = details::Finally{[] { _::unlockStream(); }};
 
         const auto endPoint = high_resolution_clock::now();
         if (timePoints.find(label) != timePoints.end()) {
@@ -246,8 +244,8 @@ namespace Logger {
         const fs::path filepath = dir / filename;
 
         logFile = std::ofstream{filepath};
-        
-        if(logFile.is_open()) {
+
+        if (logFile.is_open()) {
             outStream.rdbuf(logFile.rdbuf());
             disableColor();
         }
