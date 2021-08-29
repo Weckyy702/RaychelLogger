@@ -46,8 +46,7 @@ else()
     )
 endif()
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED TRUE)
+target_compile_features(RaychelLogger PUBLIC cxx_std_17)
 
 
 
