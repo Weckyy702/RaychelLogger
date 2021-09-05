@@ -20,7 +20,7 @@ set(RAYCHELLOGGER_INSTALLED_LIB_DIR ${CMAKE_INSTALL_FULL_LIBDIR}/RaychelLogger)
 
 
 #LIBRARY
-add_library(RaychelLogger ${RAYCHELLOGGER_HEADERS} ${RAYCHELLOGGER_SOURCES})
+add_library(RaychelLogger SHARED ${RAYCHELLOGGER_HEADERS} ${RAYCHELLOGGER_SOURCES})
 target_include_directories(RaychelLogger PUBLIC
     $<BUILD_INTERFACE:${RAYCHELLOGGER_HEADER_PATH}> # for headers when building
     $<INSTALL_INTERFACE:${RAYCHELLOGGER_INSTALLED_HEADER_DIR}> # for client in install mode
