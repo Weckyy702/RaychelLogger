@@ -1,4 +1,4 @@
-#include "Logger.h"
+#include "RaychelLogger/Logger.h"
 
 using namespace Logger;
 
@@ -41,8 +41,8 @@ int main(int /*unused*/, const char** /*unused*/)
     info(cv_n, '\n');
     info(ref_cv_n, '\n');
 
-    char bad_style_string[] = "char[]";
-    const char* worse_style_string = "const char*";
+    const char* bad_style_string = "const char*";
+    char worse_style_string[] = "char[]";
 
     info(bad_style_string, '\n');
     info(worse_style_string, '\n');

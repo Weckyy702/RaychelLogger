@@ -26,7 +26,7 @@
 *
 */
 
-#include "RaychelLogger/Logger.h"
+#include "Logger.h"
 
 #include <filesystem>
 #include <fstream>
@@ -168,8 +168,9 @@ namespace Logger {
         [[maybe_unused]] const auto unlock_on_exit = details::Finally{[] { _::unlockStream(); }};
         const auto tp = std::chrono::high_resolution_clock::now();
 
-        timePoints.insert_or_assign(std::string{label}, tp);
-        return std::string{label};
+        std::string str{label};
+        timePoints.insert_or_assign(str, tp);
+        return str;
     }
 
     duration_t endTimer(const std::string& label) noexcept
@@ -202,20 +203,20 @@ namespace Logger {
         return duration_t(-1);
     }
 
-    void logDuration(const std::string& label, const std::string& _prefix, const std::string& suffix) noexcept
+    void logDuration(const std::string& label, std::string_view _prefix, std::string_view suffix) noexcept
     {
         const auto dur = endTimer(label);
         if (dur.count() != -1) {
-            const std::string prefix = (_prefix.empty()) ? (std::string(label) + ": "s) : _prefix;
+            const auto prefix = (_prefix.empty()) ? (label + ": "s) : std::string{_prefix};
             info(prefix, dur.count(), suffix);
         }
     }
 
-    void logDurationPersistent(const std::string& label, const std::string& _prefix, const std::string& suffix) noexcept
+    void logDurationPersistent(const std::string& label, std::string_view _prefix, std::string_view suffix) noexcept
     {
         const auto dur = getTimer(label);
         if (dur.count() != -1) {
-            const std::string prefix = (_prefix.empty()) ? (std::string(label) + ": "s) : _prefix;
+            const auto prefix = (_prefix.empty()) ? (label + ": "s) : std::string{_prefix};
             info(prefix, dur.count(), suffix);
         }
     }
@@ -234,6 +235,7 @@ namespace Logger {
             fs::create_directories(dir, ec);
             if (ec) {
                 error("failed to open log file '", directory, "/", filename, "': ", ec.message());
+                return;
             }
         }
 
