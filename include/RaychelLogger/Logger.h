@@ -92,11 +92,7 @@ namespace Logger {
         template <typename T, typename = std::enable_if_t<!std::is_same_v<std::remove_cv_t<T>, char>>>
         [[nodiscard]] std::string getRepStreamable(T* obj) noexcept
         {
-            std::ostringstream interpreter;
-
-            interpreter << details::type_name<T>() << "* at 0x" << std::hex << reinterpret_cast<std::uintptr_t>(obj);
-
-            return interpreter.str();
+            return getRepNonStreamable(&obj);
         }
 
         //overload getRepStreamable so C-style strings don't get logged as pointers
@@ -109,7 +105,13 @@ namespace Logger {
         template <>
         [[nodiscard]] inline std::string getRepStreamable<char, void>(char* obj) noexcept
         {
-            return {obj};
+            return getRepStreamable(const_cast<const char*>(obj));
+        }
+
+        template<>
+        [[nodiscard]] inline std::string getRepStreamable<volatile char, void>(volatile char* obj) noexcept
+        {
+            return getRepStreamable(const_cast<const char*>(obj));
         }
 
         //internal function. Not to be used directly
@@ -259,12 +261,11 @@ namespace Logger {
 
     //log the duration since the last call to startTimer(label). removes label from the list of active labels
     LOGGER_EXPORT void
-    logDuration(const std::string& label, const std::string& prefix = ""s, const std::string& suffix = "ms\n"s) noexcept;
+    logDuration(const std::string& label, std::string_view prefix = ""s, std::string_view suffix = "ms\n"s) noexcept;
 
     //log the duration since the last call to startTimer(label). does NOT remove label from the list of acitve labels
     LOGGER_EXPORT void
-    logDurationPersistent(const std::string& label, const std::string& prefix = ""s, const std::string& suffix = "ms\n"s) noexcept;
-
+    logDurationPersistent(const std::string& label, std::string_view prefix = ""s, std::string_view suffix = "ms\n"s) noexcept;
     //set minimum level the Message has to be sent with in order to show up. Default: INFO
     LOGGER_EXPORT LogLevel setMinimumLogLevel(LogLevel) noexcept;
 
