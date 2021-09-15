@@ -272,7 +272,7 @@ namespace Logger {
     /// \brief Configure the Logger to log into a file instead of a std::ostream
     /// \param directory Directory of the logfile. must end with "/"
     /// \param fileName Name of the logfile. Does not need an extension
-    LOGGER_EXPORT void initLogFile(const std::string& directory, const std::string& fileName = "Log.log");
+    LOGGER_EXPORT void initLogFile(std::string_view directory, std::string_view fileName = "Log.log");
 
     /**
 	*\brief Close the current log file, if existent

@@ -231,7 +231,7 @@ namespace Logger {
         return minLogLevel;
     }
 
-    void initLogFile(const std::string& directory, const std::string& filename)
+    void initLogFile(std::string_view directory, std::string_view filename)
     {
         const fs::path dir{directory};
         if (!directory.empty()) {
@@ -247,7 +247,7 @@ namespace Logger {
             dumpLogFile();
         }
 
-        const fs::path filepath = dir / filename;
+        const auto filepath = dir / filename;
 
         logFile = std::ofstream{filepath};
 
