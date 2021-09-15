@@ -41,7 +41,6 @@ else()
         -Wshadow
         -Wno-unknown-pragmas
         -Wconversion
-        -Werror
         -pedantic
     )
 endif()
