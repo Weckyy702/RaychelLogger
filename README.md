@@ -1,3 +1,5 @@
+[![Build Status](https://app.travis-ci.com/Weckyy702/RaychelLogger.svg?branch=main)](https://app.travis-ci.com/Weckyy702/RaychelLogger)
+
 <h1>RaychelLogger: A simple logging library for C++17</h1>
 
 Features
