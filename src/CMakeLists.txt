@@ -1,8 +1,8 @@
 #HEADER FILES
-set(RAYCHELLOGGER_HEADER_PATH "${RaychelLogger_SOURCE_DIR}/include/RaychelLogger")
+set(RAYCHELLOGGER_INCLUDE_PATH "${RaychelLogger_SOURCE_DIR}/include")
 set(RAYCHELLOGGER_HEADERS 
-    ${RAYCHELLOGGER_HEADER_PATH}/Helper.h
-    ${RAYCHELLOGGER_HEADER_PATH}/Logger.h
+    ${RAYCHELLOGGER_INCLUDE_PATH}/RaychelLogger/Helper.h
+    ${RAYCHELLOGGER_INCLUDE_PATH}/RaychelLogger/Logger.h
 )
 
 #SOURCE FILES
@@ -22,7 +22,7 @@ set(RAYCHELLOGGER_INSTALLED_LIB_DIR ${CMAKE_INSTALL_FULL_LIBDIR}/RaychelLogger)
 #LIBRARY
 add_library(RaychelLogger SHARED ${RAYCHELLOGGER_HEADERS} ${RAYCHELLOGGER_SOURCES})
 target_include_directories(RaychelLogger PUBLIC
-    $<BUILD_INTERFACE:${RAYCHELLOGGER_HEADER_PATH}> # for headers when building
+    $<BUILD_INTERFACE:${RAYCHELLOGGER_INCLUDE_PATH}> # for headers when building
     $<INSTALL_INTERFACE:${RAYCHELLOGGER_INSTALLED_HEADER_DIR}> # for client in install mode
 )
 
