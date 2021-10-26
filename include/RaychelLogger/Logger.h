@@ -43,7 +43,7 @@
 #include <type_traits>
 
 namespace Logger {
-    enum class LogLevel : size_t { debug = 0U, info, warn, error, critical, fatal, log };
+    enum class LogLevel : size_t { debug, info, warn, error, critical, fatal, log };
 
     using namespace std::string_literals;
 
@@ -53,7 +53,7 @@ namespace Logger {
     namespace _ {
 
         //internal function. Not to be used directly
-        LOGGER_EXPORT [[nodiscard]] LogLevel requiredLevel() noexcept;
+        [[nodiscard]] LOGGER_EXPORT LogLevel requiredLevel() noexcept;
 
         //internal function. Not to be used directly
         LOGGER_EXPORT void setLogLevel(LogLevel) noexcept;
@@ -254,10 +254,10 @@ namespace Logger {
     LOGGER_EXPORT std::string startTimer(std::string_view label) noexcept;
 
     //return the duration since the last call to startTimer(label). removes label from the list of active labels
-    LOGGER_EXPORT [[nodiscard]] duration_t endTimer(const std::string& label) noexcept;
+    [[nodiscard]] LOGGER_EXPORT duration_t endTimer(const std::string& label) noexcept;
 
     //return the duration since the last call to startTimer(label). does NOT remove label from the list of acitve labels
-    LOGGER_EXPORT [[nodiscard]] duration_t getTimer(const std::string& label) noexcept;
+    [[nodiscard]] LOGGER_EXPORT duration_t getTimer(const std::string& label) noexcept;
 
     //log the duration since the last call to startTimer(label). removes label from the list of active labels
     LOGGER_EXPORT void
