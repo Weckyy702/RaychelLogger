@@ -30,7 +30,7 @@
 #define HELPER_H_
 
 #ifdef _WIN32
-    #ifdef RAYCHELLOGGER_EXPORTS
+    #ifdef RaychelLogger_EXPORTS
         #define LOGGER_EXPORT __declspec(dllexport)
     #else
         #define LOGGER_EXPORT __declspec(dllimport)
