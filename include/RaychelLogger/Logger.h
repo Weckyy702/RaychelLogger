@@ -45,7 +45,7 @@
 namespace Logger {
     enum class LogLevel : size_t { debug, info, warn, error, critical, fatal, log };
 
-    using namespace std::string_literals;
+    using namespace std::string_view_literals;
 
     using timePoint_t = std::chrono::high_resolution_clock::time_point;
     using duration_t = std::chrono::milliseconds;
@@ -261,11 +261,11 @@ namespace Logger {
 
     //log the duration since the last call to startTimer(label). removes label from the list of active labels
     LOGGER_EXPORT void
-    logDuration(const std::string& label, std::string_view prefix = ""s, std::string_view suffix = "ms\n"s) noexcept;
+    logDuration(const std::string& label, std::string_view prefix = ""sv, std::string_view suffix = "ms\n"sv) noexcept;
 
     //log the duration since the last call to startTimer(label). does NOT remove label from the list of acitve labels
     LOGGER_EXPORT void
-    logDurationPersistent(const std::string& label, std::string_view prefix = ""s, std::string_view suffix = "ms\n"s) noexcept;
+    logDurationPersistent(const std::string& label, std::string_view prefix = ""sv, std::string_view suffix = "ms\n"sv) noexcept;
     //set minimum level the Message has to be sent with in order to show up. Default: INFO
     LOGGER_EXPORT LogLevel setMinimumLogLevel(LogLevel) noexcept;
 

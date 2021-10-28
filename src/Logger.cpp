@@ -90,6 +90,12 @@ namespace Logger {
             currentLevel = level;
         }
 
+        //TODO: why does MSVC accept this?
+        //We disable -Wsign-conversion here because std::string_view::size() returns an unsigned std::size_t 
+        //but std::ostream::write() takes a std::streamsize which is signed
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wsign-conversion"
+
         void printWithoutLabel(std::string_view msg) noexcept
         {
             if (doColor) {
@@ -118,6 +124,8 @@ namespace Logger {
             }
             printWithoutLabel(msg);
         }
+
+        #pragma GCC diagnostic pop
 
         void lockStream()
         {
@@ -209,6 +217,8 @@ namespace Logger {
 
     void logDuration(const std::string& label, std::string_view _prefix, std::string_view suffix) noexcept
     {
+        using namespace std::string_literals;
+
         const auto dur = endTimer(label);
         if (dur.count() != -1) {
             const auto prefix = (_prefix.empty()) ? (label + ": "s) : std::string{_prefix};
@@ -218,6 +228,8 @@ namespace Logger {
 
     void logDurationPersistent(const std::string& label, std::string_view _prefix, std::string_view suffix) noexcept
     {
+        using namespace std::string_literals;
+
         const auto dur = getTimer(label);
         if (dur.count() != -1) {
             const auto prefix = (_prefix.empty()) ? (label + ": "s) : std::string{_prefix};
