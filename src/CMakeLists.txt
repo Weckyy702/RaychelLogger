@@ -33,6 +33,7 @@ if(${MSVC})
     target_compile_options(${PROJECT_NAME} PRIVATE
         /W4
         /wd4068 #unknown pragma
+        /Wx
     )
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE
@@ -42,6 +43,7 @@ else()
         -Wno-unknown-pragmas
         -Wconversion
         -pedantic
+        -Werror
     )
 endif()
 
