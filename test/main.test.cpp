@@ -43,9 +43,11 @@ int main(int /*unused*/, const char** /*unused*/)
 
     const char* bad_style_string = "const char*";
     char worse_style_string[] = "char[]";
+    char* worst_style_string = "char*"; //Actually not allowed since ISO C++11
 
     info(bad_style_string, '\n');
     info(worse_style_string, '\n');
+    info(worst_style_string, '\n');
 
     return 0;
 }
