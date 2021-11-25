@@ -73,7 +73,8 @@ namespace Logger {
         {
             std::ostringstream interpreter;
 
-            interpreter << details::type_name<std::remove_reference_t<T>>() << " at 0x" << std::hex << reinterpret_cast<std::uintptr_t>(&obj);
+            interpreter << details::type_name<std::remove_reference_t<T>>() << " at 0x" << std::hex
+                        << reinterpret_cast<std::uintptr_t>(&obj);
 
             return interpreter.str();
         }
@@ -104,13 +105,15 @@ namespace Logger {
         template <>
         [[nodiscard]] inline std::string getRepStreamable<char, void>(char* obj) noexcept
         {
-            return getRepStreamable(const_cast<const char*>(obj));
+            return getRepStreamable(
+                const_cast<const char*>(obj)); //NOLINT(cppcoreguidelines-pro-type-const-cast): we are adding const here
         }
 
-        template<>
+        template <>
         [[nodiscard]] inline std::string getRepStreamable<volatile char, void>(volatile char* obj) noexcept
         {
-            return getRepStreamable(const_cast<const char*>(obj));
+            return getRepStreamable(
+                const_cast<const char*>(obj)); //NOLINT(cppcoreguidelines-pro-type-const-cast): removing volatile is not a problem
         }
 
         //internal function. Not to be used directly
