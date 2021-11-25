@@ -185,7 +185,7 @@ namespace Logger {
         return str;
     }
 
-    duration_t endTimer(const std::string& label) noexcept
+    std::chrono::nanoseconds _::endTimer(const std::string& label) noexcept
     {
         using namespace std::chrono;
 
@@ -195,46 +195,27 @@ namespace Logger {
         const auto endPoint = high_resolution_clock::now();
         if (timePoints.find(label) != timePoints.end()) {
             const auto startTime = timePoints.extract(label).mapped();
-            return duration_cast<duration_t>(endPoint - startTime);
+            return duration_cast<std::chrono::nanoseconds>(endPoint - startTime);
         }
 
         error("Label ", label, " not found!\n");
-        return duration_t(-1);
+        return std::chrono::nanoseconds{-1};
     }
 
-    duration_t getTimer(const std::string& label) noexcept
+    std::chrono::nanoseconds _::getTimer(const std::string& label) noexcept
     {
         using namespace std::chrono;
+
+        _::lockStream();
+        [[maybe_unused]] const auto unlock_on_exit = details::Finally{[]{ _::unlockStream(); }};
 
         const auto endPoint = high_resolution_clock::now();
         if (timePoints.find(label) != timePoints.end()) {
             const auto startTime = timePoints.at(label);
-            return duration_cast<duration_t>(endPoint - startTime);
+            return duration_cast<std::chrono::nanoseconds>(endPoint - startTime);
         }
         error("Label ", label, " not found!\n");
-        return duration_t(-1);
-    }
-
-    void logDuration(const std::string& label, std::string_view _prefix, std::string_view suffix) noexcept
-    {
-        using namespace std::string_literals;
-
-        const auto dur = endTimer(label);
-        if (dur.count() != -1) {
-            const auto prefix = (_prefix.empty()) ? (label + ": "s) : std::string{_prefix};
-            info(prefix, dur.count(), suffix);
-        }
-    }
-
-    void logDurationPersistent(const std::string& label, std::string_view _prefix, std::string_view suffix) noexcept
-    {
-        using namespace std::string_literals;
-
-        const auto dur = getTimer(label);
-        if (dur.count() != -1) {
-            const auto prefix = (_prefix.empty()) ? (label + ": "s) : std::string{_prefix};
-            info(prefix, dur.count(), suffix);
-        }
+        return std::chrono::nanoseconds{-1};
     }
 
     LogLevel setMinimumLogLevel(LogLevel lv) noexcept

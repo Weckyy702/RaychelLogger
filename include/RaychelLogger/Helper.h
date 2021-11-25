@@ -41,6 +41,7 @@
 
 #include <string_view>
 #include <type_traits>
+#include <chrono>
 
 namespace Logger::details {
 
@@ -100,6 +101,40 @@ namespace Logger::details {
 
     private:
         F f_;
+    };
+
+    template <typename T>
+    struct suffix_for
+    {};
+
+    template <>
+    struct suffix_for<std::chrono::nanoseconds>
+    {
+        static constexpr std::string_view value = "ns";
+    };
+
+    template <>
+    struct suffix_for<std::chrono::microseconds>
+    {
+        static constexpr std::string_view value = "us";
+    };
+
+    template <>
+    struct suffix_for<std::chrono::milliseconds>
+    {
+        static constexpr std::string_view value = "ms";
+    };
+
+    template <>
+    struct suffix_for<std::chrono::seconds>
+    {
+        static constexpr std::string_view value = "s";
+    };
+
+    template <>
+    struct suffix_for<std::chrono::hours>
+    {
+        static constexpr std::string_view value = "h";
     };
 } // namespace Logger::details
 

@@ -48,7 +48,6 @@ namespace Logger {
     using namespace std::string_view_literals;
 
     using timePoint_t = std::chrono::high_resolution_clock::time_point;
-    using duration_t = std::chrono::milliseconds;
 
     namespace _ {
 
@@ -160,6 +159,10 @@ namespace Logger {
         {
             _::logConcurrent(lv, log_with_label, std::forward<Args>(args)...);
         }
+
+        LOGGER_EXPORT [[nodiscard]] std::chrono::nanoseconds endTimer(const std::string& label) noexcept;
+
+        LOGGER_EXPORT [[nodiscard]] std::chrono::nanoseconds getTimer(const std::string& label) noexcept;
     } // namespace _
 
     /// \brief Log a message with the provided level. Can log multiple objects seperated by a comma
@@ -254,18 +257,76 @@ namespace Logger {
     LOGGER_EXPORT std::string startTimer(std::string_view label) noexcept;
 
     //return the duration since the last call to startTimer(label). removes label from the list of active labels
-    [[nodiscard]] LOGGER_EXPORT duration_t endTimer(const std::string& label) noexcept;
+    template <typename T = std::chrono::milliseconds>
+    [[nodiscard]] T endTimer(const std::string& label) noexcept
+    {
+        const auto dur = _::endTimer(label);
+
+        return std::chrono::duration_cast<T>(dur);
+    }
 
     //return the duration since the last call to startTimer(label). does NOT remove label from the list of acitve labels
-    [[nodiscard]] LOGGER_EXPORT duration_t getTimer(const std::string& label) noexcept;
+    template <typename T = std::chrono::milliseconds>
+    [[nodiscard]] T getTimer(const std::string& label) noexcept
+    {
+        const auto dur = _::getTimer(label);
+
+        return std::chrono::duration_cast<T>(dur);
+    }
+
+    template <typename T>
+    void logDuration(
+        LogLevel level, const std::string& label, std::string_view prefix = ""sv,
+        std::string_view suffix = details::suffix_for<T>::value) noexcept
+    {
+        const auto dur = endTimer<T>(label).count();
+
+        if (dur == -1) {
+            return;
+        }
+
+        if (prefix.empty()) {
+            log(level, label, ": ", dur, suffix, '\n');
+        } else {
+            log(level, prefix, dur, suffix, '\n');
+        }
+    }
 
     //log the duration since the last call to startTimer(label). removes label from the list of active labels
-    LOGGER_EXPORT void
-    logDuration(const std::string& label, std::string_view prefix = ""sv, std::string_view suffix = "ms\n"sv) noexcept;
+    template <typename T = std::chrono::milliseconds>
+    void logDuration(
+        const std::string& label, std::string_view prefix = ""sv,
+        std::string_view suffix = details::suffix_for<T>::value) noexcept
+    {
+        logDuration<T>(LogLevel::log, label, prefix, suffix);
+    }
+
+    template <typename T = std::chrono::milliseconds>
+    void logDurationPersistent(
+        LogLevel level, const std::string& label, std::string_view prefix = ""sv,
+        std::string_view suffix = details::suffix_for<T>::value) noexcept
+    {
+        const auto dur = getTimer<T>(label).count();
+
+        if (dur == -1) {
+            return;
+        }
+
+        if (prefix.empty()) {
+            log(label, ": ", dur, suffix, '\n');
+        } else {
+            log(prefix, dur, suffix, '\n');
+        }
+    }
 
     //log the duration since the last call to startTimer(label). does NOT remove label from the list of acitve labels
-    LOGGER_EXPORT void
-    logDurationPersistent(const std::string& label, std::string_view prefix = ""sv, std::string_view suffix = "ms\n"sv) noexcept;
+    template <typename T = std::chrono::milliseconds>
+    void logDurationPersistent(
+        const std::string& label, std::string_view prefix = ""sv,
+        std::string_view suffix = details::suffix_for<T>::value) noexcept
+    {
+        logDurationPersistent<T>(LogLevel::log, label, prefix, suffix);
+    }
     //set minimum level the Message has to be sent with in order to show up. Default: INFO
     LOGGER_EXPORT LogLevel setMinimumLogLevel(LogLevel) noexcept;
 
