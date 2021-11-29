@@ -30,10 +30,10 @@
 
 #if __has_include(<filesystem>)
     #include <filesystem>
-    namespace fs = std::filesystem;
+namespace fs = std::filesystem;
 #else
     #include <experimental/filesystem>
-    namespace fs = std::experimental::filesystem;
+namespace fs = std::experimental::filesystem;
 #endif
 #include <fstream>
 #include <iostream>
@@ -78,7 +78,7 @@ namespace Logger {
         return doColor ? cols.at(static_cast<size_t>(currentLevel)) : "";
     }
 
-    namespace _ {
+    namespace details {
 
         LogLevel requiredLevel() noexcept
         {
@@ -90,11 +90,11 @@ namespace Logger {
             currentLevel = level;
         }
 
-        //TODO: why does MSVC accept this?
-        //We disable -Wsign-conversion here because std::string_view::size() returns an unsigned std::size_t 
-        //but std::ostream::write() takes a std::streamsize which is signed
-        #pragma GCC diagnostic push
-        #pragma GCC diagnostic ignored "-Wsign-conversion"
+//TODO: why does MSVC accept this?
+//We disable -Wsign-conversion here because std::string_view::size() returns an unsigned std::size_t
+//but std::ostream::write() takes a std::streamsize which is signed. We cannot do anything about that :(
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
 
         void printWithoutLabel(std::string_view msg) noexcept
         {
@@ -125,7 +125,7 @@ namespace Logger {
             printWithoutLabel(msg);
         }
 
-        #pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
 
         void lockStream()
         {
@@ -141,26 +141,25 @@ namespace Logger {
             }
         }
 
-    } // namespace _
+    } // namespace details
 
     void setLogLabel(LogLevel lv, std::string_view label) noexcept
     {
-        _::lockStream();
-        [[maybe_unused]] const auto unlock_mutex_on_exit = details::Finally([]() { _::unlockStream(); });
+        RAYCHELLOGGER_LOCK_STREAM();
 
         levelLabels.at(static_cast<size_t>(lv)) = label;
     }
 
     void setLogColor(LogLevel lv, std::string_view color) noexcept
     {
-        _::lockStream();
-        [[maybe_unused]] const auto unlock_mutex_on_exit = details::Finally([]() { _::unlockStream(); });
+        RAYCHELLOGGER_LOCK_STREAM();
 
         cols.at(static_cast<size_t>(lv)) = color;
     }
 
     void setOutStream(std::ostream& os)
     {
+        RAYCHELLOGGER_LOCK_STREAM();
         outStream.rdbuf(os.rdbuf());
     }
 
@@ -176,8 +175,7 @@ namespace Logger {
 
     std::string startTimer(std::string_view label) noexcept
     {
-        _::lockStream();
-        [[maybe_unused]] const auto unlock_on_exit = details::Finally{[] { _::unlockStream(); }};
+        RAYCHELLOGGER_LOCK_STREAM();
         const auto tp = std::chrono::high_resolution_clock::now();
 
         std::string str{label};
@@ -185,12 +183,11 @@ namespace Logger {
         return str;
     }
 
-    std::chrono::nanoseconds _::endTimer(const std::string& label) noexcept
+    std::chrono::nanoseconds details::endTimer(const std::string& label) noexcept
     {
         using namespace std::chrono;
 
-        _::lockStream();
-        [[maybe_unused]] const auto unlock_on_exit = details::Finally{[] { _::unlockStream(); }};
+        RAYCHELLOGGER_LOCK_STREAM();
 
         const auto endPoint = high_resolution_clock::now();
         if (timePoints.find(label) != timePoints.end()) {
@@ -202,12 +199,11 @@ namespace Logger {
         return std::chrono::nanoseconds{-1};
     }
 
-    std::chrono::nanoseconds _::getTimer(const std::string& label) noexcept
+    std::chrono::nanoseconds details::getTimer(const std::string& label) noexcept
     {
         using namespace std::chrono;
 
-        _::lockStream();
-        [[maybe_unused]] const auto unlock_on_exit = details::Finally{[]{ _::unlockStream(); }};
+        RAYCHELLOGGER_LOCK_STREAM();
 
         const auto endPoint = high_resolution_clock::now();
         if (timePoints.find(label) != timePoints.end()) {

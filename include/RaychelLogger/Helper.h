@@ -39,9 +39,9 @@
     #define LOGGER_EXPORT
 #endif
 
+#include <chrono>
 #include <string_view>
 #include <type_traits>
-#include <chrono>
 
 namespace Logger::details {
 
