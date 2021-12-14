@@ -226,7 +226,7 @@ namespace Logger {
         * 
         * \param label Label of the timer
         */
-        LOGGER_EXPORT [[nodiscard]] std::chrono::nanoseconds endTimer(const std::string& label) noexcept;
+         [[nodiscard]] LOGGER_EXPORT std::chrono::nanoseconds endTimer(const std::string& label) noexcept;
 
         /**
         * \brief Get the Timer associated with label
@@ -234,7 +234,7 @@ namespace Logger {
         * \param label Label of the timer
         * \return LOGGER_EXPORT 
         */
-        LOGGER_EXPORT [[nodiscard]] std::chrono::nanoseconds getTimer(const std::string& label) noexcept;
+       [[nodiscard]] LOGGER_EXPORT std::chrono::nanoseconds getTimer(const std::string& label) noexcept;
     } // namespace details
 
     /// \brief Log a message with the provided level. Can log multiple objects seperated by a comma
